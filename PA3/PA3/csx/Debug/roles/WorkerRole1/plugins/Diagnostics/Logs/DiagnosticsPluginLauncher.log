@@ -1,0 +1,15 @@
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Emulator config file set to C:\Users\Ha\Desktop\PA3\PA3\csx\Debug\roles\WorkerRole1\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] DiagnosticsStoreRootPath set to: C:\Users\Ha\AppData\Local\dftmp\Resources\b9999feb-8685-4aed-b599-eef728b76d61
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Loading config file: C:\Users\Ha\Desktop\PA3\PA3\csx\Debug\roles\WorkerRole1\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Config file to read: C:\Users\Ha\Desktop\PA3\PA3\csx\Debug\roles\WorkerRole1\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Checking VM Type
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Emulator config file set to C:\Users\Ha\Desktop\PA3\PA3\csx\Debug\roles\WorkerRole1\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Extension set to Emulator Mode
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Reading XML configuration file
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Bypassing private config decryption
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Stopping the running plugin, if any
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] No DiagnosticsPlugin is running.
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Killing any DiagnosticsPlugin that might remain.
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Killing any MonAgentHost that might remain.
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Diagnostics plugin stopped successfully
+DiagnosticsPluginLauncher.exe Information: 0 : [2/20/2017 1:49:23 PM] Resetting DiagnosticPlugin

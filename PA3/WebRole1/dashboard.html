@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>PA3 Tim Ha</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $("#startCrawl").click(function () {
+            $.ajax({
+                type: 'POST',
+                data: '{}',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                url: "admin.asmx/StartCrawling",
+                success: function (data) {
+                    var p = "<p>" + data.d + "</p>";
+                    $("#dashboard").html(p);
+                }
+            });
+        });
+
+        $("#stopCrawl").click(function () {
+            $.ajax({
+                type: 'POST',
+                data: '{}',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                url: "admin.asmx/StartCrawling",
+                success: function (data) {
+                    var p = "<p>" + data.d + "</p>";
+                    $("#dashboard").html(p);
+                }
+            });
+        });
+
+    });
+    </script>
+</head>
+<body>
+    <div>
+        <button id="startCrawl">Start</button>
+        <button id="stopCrawl">Stop</button>
+    </div>
+    <div id="dashboard">
+
+    </div>
+</body>
+</html>
