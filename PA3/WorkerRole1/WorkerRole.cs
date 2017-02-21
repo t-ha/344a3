@@ -9,6 +9,11 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.Storage;
+using ClassLibrary;
+using Microsoft.WindowsAzure.Storage.Queue;
+using Microsoft.WindowsAzure.Storage.Table;
+using WebRole1;
+using HtmlAgilityPack;
 
 namespace WorkerRole1
 {
@@ -16,18 +21,55 @@ namespace WorkerRole1
     {
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
+        private static InitClass ic = new InitClass();
+        private Crawler spider;
+        private bool hasStarted = false;
+        private HtmlDocument htmlDoc = new HtmlDocument();
 
         public override void Run()
         {
-            Trace.TraceInformation("WorkerRole1 is running");
+            while (true)
+            {
+                CloudQueueMessage adminMsg = ic.adminQueue.GetMessage();
+                if (adminMsg != null)
+                {
+                    if (adminMsg.AsString == "load")
+                    {
+                        spider = new Crawler("bleacherreport.com", "fdsfs.com", ic.urlQueue);
+                        Console.WriteLine(spider.disallowed.Count);
+                    }
+                    else if (adminMsg.AsString == "start")
+                    {
+                        hasStarted = true;
+                    }
+                    ic.adminQueue.DeleteMessage(adminMsg);
+                }
 
-            try
-            {
-                this.RunAsync(this.cancellationTokenSource.Token).Wait();
-            }
-            finally
-            {
-                this.runCompleteEvent.Set();
+                if (hasStarted)
+                {
+                    CloudQueueMessage urlMsg = spider.toBeCrawled.GetMessage();
+                    if (urlMsg != null)
+                    {
+                        bool isAllowed = true;
+                        string url = urlMsg.AsString;
+                        foreach (string disallowedUrl in spider.disallowed)
+                        {
+                            isAllowed = !url.Contains(disallowedUrl);
+                        }
+                        
+                        if (isAllowed)
+                        {
+                            spider.marked.Add(url);
+                            htmlDoc.Load(url);
+                            //foreach (HtmlNode link in htmlDoc.DocumentElement.SelectNodes("//a[@href"]))
+                        }
+
+
+
+
+                        spider.toBeCrawled.DeleteMessage(urlMsg);
+                    }
+                }
             }
         }
 

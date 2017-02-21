@@ -13,9 +13,9 @@ namespace ClassLibrary
 {
     public class InitClass
     {
-        CloudQueue urlQueue;
-        CloudQueue adminQueue;
-        CloudTable titlesTable;
+        public CloudQueue urlQueue { get; set; }
+        public CloudQueue adminQueue { get; set; }
+        public CloudTable titlesTable { get; set; }
 
         public InitClass()
         {

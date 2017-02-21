@@ -7,16 +7,28 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script>
     $(document).ready(function () {
+        $("#loadCrawl").click(function () {
+            $.ajax({
+                type: 'POST',
+                data: '{}',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                url: "admin.asmx/LoadCrawler",
+                success: function (data) {
+                    var p = "<p>" + data.d + "</p>";
+                    $("#dashboard").html(p);
+                }
+            });
+        });
+
         $("#startCrawl").click(function () {
             $.ajax({
                 type: 'POST',
                 data: '{}',
                 dataType: "json",
                 contentType: 'application/json; charset=utf-8',
-                url: "admin.asmx/StartCrawling",
+                url: "admin.asmx/StartCrawler",
                 success: function (data) {
-                    var p = "<p>" + data.d + "</p>";
-                    $("#dashboard").html(p);
                 }
             });
         });
@@ -35,16 +47,54 @@
             });
         });
 
+        $("#testCrawl").click(function () {
+            $.ajax({
+                type: 'POST',
+                data: '{}',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                url: "admin.asmx/TestTest",
+                success: function (data) {
+                    var p = "<h2>" + data.d + "</h2>";
+                    $("#dashboard").html(p);
+                }
+            });
+            GetUsageData();
+        });
+
     });
+
+    function GetUsageData() {
+        setInterval(function () {
+            $.ajax({
+                type: 'POST',
+                data: '{}',
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                url: "admin.asmx/GetUsage",
+                success: function (data) {
+                    var obj = $.parseJSON(data.d);
+                    var table = "<table>";
+                    table = table + "<tr><th>CPU Usage</th><td>" + obj[0] + " %</td></tr>";
+                    table = table + "<tr><th>Memory Usage</th><td>" + obj[1] + " MB Free</td></tr>";
+                    table = table + "</table>";
+                    $("#dashboard2").html(table);
+                }
+            });
+        }, 500);
+    }
     </script>
 </head>
 <body>
     <div>
-        <button id="startCrawl">Start</button>
-        <button id="stopCrawl">Stop</button>
+        <button id="loadCrawl">Load</button>
+        <button id="startCrawl">Start Crawling</button>
+        <button id="stopCrawl">Stop Crawling</button>
+        <button id="testCrawl">TESTTEST</button>
     </div>
     <div id="dashboard">
-
+    </div>
+    <div id="dashboard2">
     </div>
 </body>
 </html>

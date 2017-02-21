@@ -13,6 +13,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Microsoft.WindowsAzure.Storage.Table;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace WebRole1
 {
@@ -27,18 +28,61 @@ namespace WebRole1
     [System.Web.Script.Services.ScriptService]
     public class admin : System.Web.Services.WebService
     {
+        private PerformanceCounter cpuPerformance = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+        private PerformanceCounter memPerformance = new PerformanceCounter("Memory", "Available MBytes");
+        private static InitClass ic = new InitClass();
 
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public string StartCrawling()
+        public string LoadCrawler()
         {
-            InitClass ic = new InitClass();
-            //CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
-            //CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
-            //CloudQueue urlQueue = queueClient.GetQueueReference("urlqueue");
-            //urlQueue.CreateIfNotExists();
-            string temp = "you started crawling!";
+            ic.adminQueue.AddMessage(new CloudQueueMessage("load"));
+            return new JavaScriptSerializer().Serialize("load");
+        }
+
+        [WebMethod]
+        public void StartCrawler()
+        {
+            ic.adminQueue.AddMessage(new CloudQueueMessage("start"));
+        }
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string TestTest()
+        {
+            CloudQueue tempQueue = ic.adminQueue;
+            for (int i = 0; i < 400; i++)
+            {
+                tempQueue.AddMessage(new CloudQueueMessage("This is a test message " + i));
+            }
+
+            string temp = "TEST COMPLETE";
             return new JavaScriptSerializer().Serialize(temp);
+        }
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string GetMemUsage()
+        {
+            float memUsage = memPerformance.NextValue();
+            return new JavaScriptSerializer().Serialize(memUsage);
+        }
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string GetCPUUsage()
+        {
+            float cpuUsage = cpuPerformance.NextValue();
+            return new JavaScriptSerializer().Serialize(cpuUsage);
+        }
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string GetUsage()
+        {
+            float cpuUsage = cpuPerformance.NextValue();
+            float memUsage = memPerformance.NextValue();
+            return new JavaScriptSerializer().Serialize(new float[2] { cpuUsage, memUsage });
         }
 
         [WebMethod]

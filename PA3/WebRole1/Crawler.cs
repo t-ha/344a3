@@ -22,7 +22,7 @@ namespace WebRole1
             SetRobots(url2);
         }
 
-        public void SetRobots(string url)
+        private void SetRobots(string url)
         {
             Queue<string> sitemaps = new Queue<string>();
 
@@ -66,6 +66,7 @@ namespace WebRole1
 
         private void ConfigureBR(string nodeUrl)
         {
+
             toBeCrawled.AddMessage(new CloudQueueMessage(nodeUrl));
         }
 
