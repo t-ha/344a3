@@ -24,7 +24,9 @@ namespace WorkerRole1
         private static InitClass ic = new InitClass();
         private Crawler spider;
         private bool hasStarted = false;
-        private HtmlDocument htmlDoc = new HtmlDocument();
+        private int totalUrlsCrawled = 0;
+        private PerformanceCounter cpuPerformance = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+        private PerformanceCounter memPerformance = new PerformanceCounter("Memory", "Available MBytes");
 
         public override void Run()
         {
@@ -35,18 +37,23 @@ namespace WorkerRole1
                 {
                     if (adminMsg.AsString == "load")
                     {
-                        spider = new Crawler("bleacherreport.com", "fdsfs.com", ic.urlQueue);
-                        Console.WriteLine(spider.disallowed.Count);
+                        spider = new Crawler("cnn.com", "bleacherreport.com", ic.urlQueue);
+                        //spider = new Crawler("daaadxxrea.com", "bleacherreport.com", ic.urlQueue);
                     }
                     else if (adminMsg.AsString == "start")
                     {
                         hasStarted = true;
+                    }
+                    else if (adminMsg.AsString == "stop")
+                    {
+                        hasStarted = false;
                     }
                     ic.adminQueue.DeleteMessage(adminMsg);
                 }
 
                 if (hasStarted)
                 {
+                    totalUrlsCrawled++;
                     CloudQueueMessage urlMsg = spider.toBeCrawled.GetMessage();
                     if (urlMsg != null)
                     {
@@ -59,14 +66,65 @@ namespace WorkerRole1
                         
                         if (isAllowed)
                         {
-                            spider.marked.Add(url);
-                            htmlDoc.Load(url);
-                            //foreach (HtmlNode link in htmlDoc.DocumentElement.SelectNodes("//a[@href"]))
+                            try
+                            {
+                                spider.marked.Add(url);
+                                string[] roots = new string[2] { "cnn.com", "bleacherreport.com" };
+                                HtmlDocument doc = new HtmlWeb().Load(url);
+
+                                List<string> filtered = new List<string>();
+                                // filter the urls. only want root domain
+                                string root = "";
+                                if (url.Contains(roots[0]))
+                                {
+                                    root = roots[0];
+                                }
+                                else
+                                {
+                                    root = roots[1];
+                                }
+                                foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
+                                {
+                                    string rawUrl = link.Attributes["href"].Value;
+                                    if (rawUrl.StartsWith("/") && rawUrl != "/users/undefined")
+                                    {
+                                        filtered.Add("http://" + root + rawUrl);
+                                    }
+                                    else if (rawUrl.Contains(root))
+                                    {
+                                        if (rawUrl.StartsWith("http://"))
+                                        {
+                                            filtered.Add(rawUrl);
+                                        }
+                                        else
+                                        {
+                                            filtered.Add("http://" + rawUrl);
+                                        }
+                                    }
+                                }
+
+                                // filter pt. 2: not disallowed and not already marked
+                                foreach (string filteredUrl in filtered)
+                                {
+                                    if (!spider.marked.Contains(filteredUrl) && !spider.disallowed.Contains(filteredUrl))
+                                    {
+                                        spider.toBeCrawled.AddMessage(new CloudQueueMessage(filteredUrl));
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+                            
+                            
                         }
 
-
-
-
+                        float cpuUsage = cpuPerformance.NextValue();
+                        float memUsage = memPerformance.NextValue();
+                        ic.urlQueue.FetchAttributes();
+                        string statsMessage = cpuUsage + "," + memUsage + "," + totalUrlsCrawled + "," + ic.urlQueue.ApproximateMessageCount + "," + spider.marked.Count;
+                        ic.statsQueue.AddMessage(new CloudQueueMessage(statsMessage));
                         spider.toBeCrawled.DeleteMessage(urlMsg);
                     }
                 }

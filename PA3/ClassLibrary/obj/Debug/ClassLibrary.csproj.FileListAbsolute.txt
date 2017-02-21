@@ -61,6 +61,7 @@ C:\Users\Ha\Desktop\PA3\ClassLibrary\bin\Debug\zh-Hans\System.Spatial.resources.
 C:\Users\Ha\Desktop\PA3\ClassLibrary\bin\Debug\zh-Hant\System.Spatial.resources.dll
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\ClassLibrary.dll
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\ClassLibrary.pdb
+C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\HtmlAgilityPack.dll
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\Microsoft.Azure.KeyVault.Core.dll
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\Microsoft.Data.Edm.dll
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\Microsoft.Data.OData.dll
@@ -73,6 +74,8 @@ C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\System.Spatial.dll
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\MonAgentListener.dll
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\WindowsAzureTelemetryEvents.dll
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\WindowsAzureEventSource.dll
+C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\HtmlAgilityPack.xml
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\Microsoft.Azure.KeyVault.Core.xml
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\Microsoft.Data.Edm.xml
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\Microsoft.Data.OData.xml
@@ -120,3 +123,4 @@ C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\zh-Hant\System.Spatial.reso
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\obj\Debug\ClassLibrary.csprojResolveAssemblyReference.cache
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\obj\Debug\ClassLibrary.dll
 C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\obj\Debug\ClassLibrary.pdb
+C:\Users\Ha\Desktop\344a3\PA3\ClassLibrary\bin\Debug\InitClass.cs

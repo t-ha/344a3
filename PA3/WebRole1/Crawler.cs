@@ -11,7 +11,7 @@ namespace WebRole1
 {
     public class Crawler
     {
-        public HashSet<string> marked;
+        public HashSet<string> marked = new HashSet<string>();
         public List<string> disallowed = new List<string>();
         public CloudQueue toBeCrawled;
 

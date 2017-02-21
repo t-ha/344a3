@@ -1,0 +1,8 @@
+﻿body {
+}
+
+table, th, tr, td {
+    border: 1px black solid;
+    border-collapse: collapse;
+    text-align: left;
+}

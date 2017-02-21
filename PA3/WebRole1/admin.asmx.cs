@@ -5,7 +5,6 @@ using System.Web;
 using System.Web.Services;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
-using ClassLibrary;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
@@ -14,6 +13,7 @@ using Microsoft.WindowsAzure.Storage.Queue;
 using Microsoft.WindowsAzure.Storage.Table;
 using System.Configuration;
 using System.Diagnostics;
+using ClassLibrary;
 
 namespace WebRole1
 {
@@ -31,6 +31,7 @@ namespace WebRole1
         private PerformanceCounter cpuPerformance = new PerformanceCounter("Processor", "% Processor Time", "_Total");
         private PerformanceCounter memPerformance = new PerformanceCounter("Memory", "Available MBytes");
         private static InitClass ic = new InitClass();
+        private List<string> stats;
 
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -41,54 +42,17 @@ namespace WebRole1
         }
 
         [WebMethod]
-        public void StartCrawler()
+        public void StartCrawling()
         {
+            stats = new List<string>();
+            for (int i = 0; i < 5; i++) { stats.Add(" "); }
             ic.adminQueue.AddMessage(new CloudQueueMessage("start"));
-        }
-
-        [WebMethod]
-        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public string TestTest()
-        {
-            CloudQueue tempQueue = ic.adminQueue;
-            for (int i = 0; i < 400; i++)
-            {
-                tempQueue.AddMessage(new CloudQueueMessage("This is a test message " + i));
-            }
-
-            string temp = "TEST COMPLETE";
-            return new JavaScriptSerializer().Serialize(temp);
-        }
-
-        [WebMethod]
-        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public string GetMemUsage()
-        {
-            float memUsage = memPerformance.NextValue();
-            return new JavaScriptSerializer().Serialize(memUsage);
-        }
-
-        [WebMethod]
-        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public string GetCPUUsage()
-        {
-            float cpuUsage = cpuPerformance.NextValue();
-            return new JavaScriptSerializer().Serialize(cpuUsage);
-        }
-
-        [WebMethod]
-        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public string GetUsage()
-        {
-            float cpuUsage = cpuPerformance.NextValue();
-            float memUsage = memPerformance.NextValue();
-            return new JavaScriptSerializer().Serialize(new float[2] { cpuUsage, memUsage });
         }
 
         [WebMethod]
         public void StopCrawling()
         {
-
+            ic.adminQueue.AddMessage(new CloudQueueMessage("stop"));
         }
 
         [WebMethod]
@@ -101,6 +65,35 @@ namespace WebRole1
         public void GetPageTitle()
         {
 
+        }
+        
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string GetStats()
+        {
+            CloudQueueMessage msg = ic.statsQueue.GetMessage();
+            if (msg != null)
+            {
+                stats = new List<string>();
+                string messageString = msg.AsString;
+                foreach (string stat in messageString.Split(','))
+                {
+                    stats.Add(stat);
+                }
+                ic.statsQueue.DeleteMessage(msg);
+            }
+            return new JavaScriptSerializer().Serialize(stats);
+        }
+        
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string GetUsage()
+        {
+            float cpuUsage = cpuPerformance.NextValue();
+            float memUsage = memPerformance.NextValue();
+            return new JavaScriptSerializer().Serialize(new float[2] { cpuUsage, memUsage });
         }
     }
 }

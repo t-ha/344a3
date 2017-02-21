@@ -27,13 +27,7 @@
       <Content destination=".\">
         <SourceDirectory path="C:\Users\Ha\Desktop\344a3\PA3\PA3\rcf\Debug\WebRole1Content\" />
       </Content>
-      <Content destination=".\">
-        <SourceDirectory path="C:\Users\Ha\Desktop\344a3\PA3\PA3\ecf\WebRole1Content\" />
-      </Content>
     </Contents>
-    <Imports>
-      <Import moduleName="Diagnostics" />
-    </Imports>
   </WebRole>
   <WorkerRole name="WorkerRole1" vmsize="Small">
     <ConfigurationSettings>
@@ -43,12 +37,6 @@
       <Content destination=".\">
         <SourceDirectory path="C:\Users\Ha\Desktop\344a3\PA3\PA3\rcf\Debug\WorkerRole1Content\" />
       </Content>
-      <Content destination=".\">
-        <SourceDirectory path="C:\Users\Ha\Desktop\344a3\PA3\PA3\ecf\WorkerRole1Content\" />
-      </Content>
     </Contents>
-    <Imports>
-      <Import moduleName="Diagnostics" />
-    </Imports>
   </WorkerRole>
 </ServiceDefinition>

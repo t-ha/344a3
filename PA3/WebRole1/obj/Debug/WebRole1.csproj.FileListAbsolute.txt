@@ -89,6 +89,7 @@ C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\WebRole1.dll.config
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\WebRole1.dll
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\WebRole1.pdb
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\ClassLibrary.dll
+C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\HtmlAgilityPack.dll
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\Microsoft.Azure.KeyVault.Core.dll
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\Microsoft.Data.Edm.dll
@@ -100,6 +101,8 @@ C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\Newtonsoft.Json.dll
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\System.Spatial.dll
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\MonAgentListener.dll
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\ClassLibrary.pdb
+C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\HtmlAgilityPack.pdb
+C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\HtmlAgilityPack.xml
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\Microsoft.Azure.KeyVault.Core.xml
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\Microsoft.Data.Edm.xml
@@ -148,3 +151,4 @@ C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\zh-Hant\System.Spatial.resources.dll
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\obj\Debug\WebRole1.csprojResolveAssemblyReference.cache
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\obj\Debug\WebRole1.dll
 C:\Users\Ha\Desktop\344a3\PA3\WebRole1\obj\Debug\WebRole1.pdb
+C:\Users\Ha\Desktop\344a3\PA3\WebRole1\bin\InitClass.cs
