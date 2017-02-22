@@ -9,11 +9,11 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.Storage;
-using ClassLibrary;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Microsoft.WindowsAzure.Storage.Table;
 using WebRole1;
 using HtmlAgilityPack;
+using System.Text;
 
 namespace WorkerRole1
 {
@@ -25,6 +25,7 @@ namespace WorkerRole1
         private Crawler spider;
         private bool hasStarted = false;
         private int totalUrlsCrawled = 0;
+        private int index = 0;
         private PerformanceCounter cpuPerformance = new PerformanceCounter("Processor", "% Processor Time", "_Total");
         private PerformanceCounter memPerformance = new PerformanceCounter("Memory", "Available MBytes");
 
@@ -32,13 +33,14 @@ namespace WorkerRole1
         {
             while (true)
             {
+                Thread.Sleep(50);
                 CloudQueueMessage adminMsg = ic.adminQueue.GetMessage();
                 if (adminMsg != null)
                 {
                     if (adminMsg.AsString == "load")
                     {
                         spider = new Crawler("cnn.com", "bleacherreport.com", ic.urlQueue);
-                        //spider = new Crawler("daaadxxrea.com", "bleacherreport.com", ic.urlQueue);
+                        ic.statusQueue.AddMessage(new CloudQueueMessage("Loading complete"));
                     }
                     else if (adminMsg.AsString == "start")
                     {
@@ -48,87 +50,97 @@ namespace WorkerRole1
                     {
                         hasStarted = false;
                     }
+                    else if (adminMsg.AsString == "clear")
+                    {
+                        hasStarted = false;
+                        totalUrlsCrawled = 0;
+                        index = 0;
+                    }
                     ic.adminQueue.DeleteMessage(adminMsg);
                 }
 
                 if (hasStarted)
                 {
-                    totalUrlsCrawled++;
                     CloudQueueMessage urlMsg = spider.toBeCrawled.GetMessage();
                     if (urlMsg != null)
                     {
-                        bool isAllowed = true;
                         string url = urlMsg.AsString;
-                        foreach (string disallowedUrl in spider.disallowed)
+                        try
                         {
-                            isAllowed = !url.Contains(disallowedUrl);
+                            totalUrlsCrawled++;
+                            HtmlDocument doc = new HtmlWeb().Load(url); // check valid url
+
+
+                            index++;
+                            string title = doc.DocumentNode.SelectSingleNode("//title").InnerText;
+                            string encodedUrl = Encode64(url);
+                            PageTitle pageTitle = new PageTitle(encodedUrl, title);
+                            TableOperation insertOperation = TableOperation.Insert(pageTitle);
+                            ic.titlesTable.Execute(insertOperation);
+
+
+                            string[] roots = new string[2] { "cnn.com", "bleacherreport.com" };
+                            List<string> filtered = new List<string>();
+                            // filter the urls. only want root domain
+                            string root = "";
+                            if (url.Contains(roots[0]))
+                            {
+                                root = roots[0];
+                            }
+                            else
+                            {
+                                root = roots[1];
+                            }
+                            foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
+                            {
+                                string rawUrl = link.Attributes["href"].Value;
+                                if (rawUrl.StartsWith("/") && rawUrl != "/users/undefined")
+                                {
+                                    filtered.Add("http://" + root + rawUrl);
+                                }
+                                else if (rawUrl.Contains(root))
+                                {
+                                    if (rawUrl.StartsWith("http://"))
+                                    {
+                                        filtered.Add(rawUrl);
+                                    }
+                                    else
+                                    {
+                                        filtered.Add("http://" + rawUrl);
+                                    }
+                                }
+                            }
+
+                            // filter pt. 2: not disallowed and not already marked
+                            foreach (string filteredUrl in filtered)
+                            {
+                                if (!spider.marked.Contains(filteredUrl) && !spider.disallowed.Contains(filteredUrl))
+                                {
+                                    spider.marked.Add(filteredUrl);
+                                    spider.toBeCrawled.AddMessage(new CloudQueueMessage(filteredUrl));
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            ic.errorQueue.AddMessage(new CloudQueueMessage(url + "|" + e.Message));
                         }
                         
-                        if (isAllowed)
-                        {
-                            try
-                            {
-                                spider.marked.Add(url);
-                                string[] roots = new string[2] { "cnn.com", "bleacherreport.com" };
-                                HtmlDocument doc = new HtmlWeb().Load(url);
-
-                                List<string> filtered = new List<string>();
-                                // filter the urls. only want root domain
-                                string root = "";
-                                if (url.Contains(roots[0]))
-                                {
-                                    root = roots[0];
-                                }
-                                else
-                                {
-                                    root = roots[1];
-                                }
-                                foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
-                                {
-                                    string rawUrl = link.Attributes["href"].Value;
-                                    if (rawUrl.StartsWith("/") && rawUrl != "/users/undefined")
-                                    {
-                                        filtered.Add("http://" + root + rawUrl);
-                                    }
-                                    else if (rawUrl.Contains(root))
-                                    {
-                                        if (rawUrl.StartsWith("http://"))
-                                        {
-                                            filtered.Add(rawUrl);
-                                        }
-                                        else
-                                        {
-                                            filtered.Add("http://" + rawUrl);
-                                        }
-                                    }
-                                }
-
-                                // filter pt. 2: not disallowed and not already marked
-                                foreach (string filteredUrl in filtered)
-                                {
-                                    if (!spider.marked.Contains(filteredUrl) && !spider.disallowed.Contains(filteredUrl))
-                                    {
-                                        spider.toBeCrawled.AddMessage(new CloudQueueMessage(filteredUrl));
-                                    }
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                            }
-                            
-                            
-                        }
 
                         float cpuUsage = cpuPerformance.NextValue();
                         float memUsage = memPerformance.NextValue();
                         ic.urlQueue.FetchAttributes();
-                        string statsMessage = cpuUsage + "," + memUsage + "," + totalUrlsCrawled + "," + ic.urlQueue.ApproximateMessageCount + "," + spider.marked.Count;
+                        string statsMessage = cpuUsage + "," + memUsage + "," + totalUrlsCrawled + "," + ic.urlQueue.ApproximateMessageCount + "," + index;
                         ic.statsQueue.AddMessage(new CloudQueueMessage(statsMessage));
                         spider.toBeCrawled.DeleteMessage(urlMsg);
                     }
                 }
             }
+        }
+
+        private string Encode64(string plaintText)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(plaintText));
         }
 
         public override bool OnStart()

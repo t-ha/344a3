@@ -13,7 +13,7 @@
     <Property name="Configuration" value="Release" />
     <Property name="Platform" value="AnyCPU" />
     <Property name="RoleTargetFramework" value="v4.5.2" />
-    <Property name="OutputDir" value="C:\Users\Ha\Desktop\344a3\PA3\PA3\obj\Release\WorkerRole1\" />
+    <Property name="OutputDir" value="C:\Users\Ha\Desktop\PA3\PA3\obj\Release\WorkerRole1\" />
     <Property name="EntryPoint" value="WorkerRole1.dll" />
     <Property name="SourceDir" value="" />
     <Property name="SitePhysicalPath" value="" />

@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>2.9</ProductVersion>
-    <ProjectGuid>ccd68959-9ed8-4b43-ab70-b93d276d579d</ProjectGuid>
+    <ProjectGuid>222e8070-c78a-469d-980d-d1c9a3613541</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PA3</RootNamespace>
@@ -39,7 +39,7 @@
   <ItemGroup>
     <ProjectReference Include="..\WebRole1\WebRole1.csproj">
       <Name>WebRole1</Name>
-      <Project>{426aa3fd-b6a0-4097-8b36-d4e6970fcd84}</Project>
+      <Project>{53b28dbb-6692-48d1-b341-a70fdbc29ed9}</Project>
       <Private>True</Private>
       <RoleType>Web</RoleType>
       <RoleName>WebRole1</RoleName>
@@ -47,7 +47,7 @@
     </ProjectReference>
     <ProjectReference Include="..\WorkerRole1\WorkerRole1.csproj">
       <Name>WorkerRole1</Name>
-      <Project>{a4a41367-bcdb-4cdd-a27c-3feecd72f73f}</Project>
+      <Project>{1b40b8b3-d947-4f23-9ed5-9407f88b50a6}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
       <RoleName>WorkerRole1</RoleName>

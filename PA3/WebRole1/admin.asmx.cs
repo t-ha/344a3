@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Services;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
-using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.Diagnostics;
-using Microsoft.WindowsAzure.ServiceRuntime;
-using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
+using System.Threading;
+using System;
 using Microsoft.WindowsAzure.Storage.Table;
-using System.Configuration;
-using System.Diagnostics;
-using ClassLibrary;
+using System.Text;
 
 namespace WebRole1
 {
@@ -28,45 +21,80 @@ namespace WebRole1
     [System.Web.Script.Services.ScriptService]
     public class admin : System.Web.Services.WebService
     {
-        private PerformanceCounter cpuPerformance = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-        private PerformanceCounter memPerformance = new PerformanceCounter("Memory", "Available MBytes");
         private static InitClass ic = new InitClass();
-        private List<string> stats;
+        private List<string> stats = new List<string>();
+        private static string status = null;
+        private static string[] errorMessage = new string[2];
 
         [WebMethod]
-        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public string LoadCrawler()
+        public void LoadCrawler()
         {
+            ic.statusQueue.AddMessage(new CloudQueueMessage("...Loading sitemaps..."));
             ic.adminQueue.AddMessage(new CloudQueueMessage("load"));
-            return new JavaScriptSerializer().Serialize("load");
         }
 
         [WebMethod]
         public void StartCrawling()
         {
-            stats = new List<string>();
-            for (int i = 0; i < 5; i++) { stats.Add(" "); }
+            ic.statusQueue.AddMessage(new CloudQueueMessage("Crawling"));
             ic.adminQueue.AddMessage(new CloudQueueMessage("start"));
+            
         }
 
         [WebMethod]
         public void StopCrawling()
         {
+            ic.statusQueue.AddMessage(new CloudQueueMessage("Idle"));
             ic.adminQueue.AddMessage(new CloudQueueMessage("stop"));
         }
 
         [WebMethod]
-        public void ClearIndex()
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string ClearIndex()
         {
-
+            ic.statusQueue.AddMessage(new CloudQueueMessage("Idle and cleared"));
+            ic.adminQueue.AddMessage(new CloudQueueMessage("clear"));
+            ic.urlQueue.Clear();
+            ic.adminQueue.Clear();
+            ic.errorQueue.Clear();
+            ic.statusQueue.Clear();
+            ic.statsQueue.Clear();
+            TableQuery<PageTitle> query = new TableQuery<PageTitle>()
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.NotEqual, "00"));
+            foreach (PageTitle entity in ic.titlesTable.ExecuteQuery(query))
+            {
+                ic.titlesTable.Execute(TableOperation.Delete(entity));
+            }
+            return new JavaScriptSerializer().Serialize("All queues and tables cleared. Workers stopped.");
         }
 
         [WebMethod]
-        public void GetPageTitle()
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string GetPageTitle(string url)
         {
-
+            string pageTitle = "";
+            string encodedUrl = Encode64(url);
+            TableQuery<PageTitle> query = new TableQuery<PageTitle>()
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, encodedUrl));
+            foreach (PageTitle entity in ic.titlesTable.ExecuteQuery(query))
+            {
+                pageTitle = entity.Title;
+            }
+            return new JavaScriptSerializer().Serialize(pageTitle);
         }
-        
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public string CheckStatus()
+        {
+            CloudQueueMessage msg = ic.statusQueue.GetMessage();
+            if (msg != null)
+            {
+                status = msg.AsString;
+                ic.statusQueue.DeleteMessage(msg);
+            }
+            return new JavaScriptSerializer().Serialize(status);
+        }
 
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
@@ -85,15 +113,24 @@ namespace WebRole1
             }
             return new JavaScriptSerializer().Serialize(stats);
         }
-        
 
         [WebMethod]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public string GetUsage()
+        public string GetErrors()
         {
-            float cpuUsage = cpuPerformance.NextValue();
-            float memUsage = memPerformance.NextValue();
-            return new JavaScriptSerializer().Serialize(new float[2] { cpuUsage, memUsage });
+            CloudQueueMessage msg = ic.errorQueue.GetMessage();
+            if (msg != null)
+            {
+                errorMessage = msg.AsString.Split('|');
+                ic.errorQueue.DeleteMessage(msg);
+            }
+            return new JavaScriptSerializer().Serialize(errorMessage);
+        }
+
+
+        private string Encode64(string plaintText)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(plaintText));
         }
     }
 }

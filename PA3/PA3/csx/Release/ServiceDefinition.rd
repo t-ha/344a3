@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<serviceModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PA3" generation="1" functional="0" release="0" Id="85394bf9-2321-4244-8ca0-e980a76c0430" dslVersion="1.2.0.0" xmlns="http://schemas.microsoft.com/dsltools/RDSM">
+<serviceModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PA3" generation="1" functional="0" release="0" Id="7a516727-e292-48da-9943-196618962bdb" dslVersion="1.2.0.0" xmlns="http://schemas.microsoft.com/dsltools/RDSM">
   <groups>
     <group name="PA3Group" generation="1" functional="0" release="0">
       <componentports>
@@ -62,7 +62,7 @@
       </maps>
       <components>
         <groupHascomponents>
-          <role name="WebRole1" generation="1" functional="0" release="0" software="C:\Users\Ha\Desktop\344a3\PA3\PA3\csx\Release\roles\WebRole1" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaIISHost.exe " memIndex="-1" hostingEnvironment="frontendadmin" hostingEnvironmentVersion="2">
+          <role name="WebRole1" generation="1" functional="0" release="0" software="C:\Users\Ha\Desktop\PA3\PA3\csx\Release\roles\WebRole1" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaIISHost.exe " memIndex="-1" hostingEnvironment="frontendadmin" hostingEnvironmentVersion="2">
             <componentports>
               <inPort name="Endpoint1" protocol="http" portRanges="80" />
             </componentports>
@@ -82,7 +82,7 @@
           </sCSPolicy>
         </groupHascomponents>
         <groupHascomponents>
-          <role name="WorkerRole1" generation="1" functional="0" release="0" software="C:\Users\Ha\Desktop\344a3\PA3\PA3\csx\Release\roles\WorkerRole1" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaWorkerHost.exe " memIndex="-1" hostingEnvironment="consoleroleadmin" hostingEnvironmentVersion="2">
+          <role name="WorkerRole1" generation="1" functional="0" release="0" software="C:\Users\Ha\Desktop\PA3\PA3\csx\Release\roles\WorkerRole1" entryPoint="base\x64\WaHostBootstrapper.exe" parameters="base\x64\WaWorkerHost.exe " memIndex="-1" hostingEnvironment="consoleroleadmin" hostingEnvironmentVersion="2">
             <settings>
               <aCS name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" defaultValue="" />
               <aCS name="__ModelData" defaultValue="&lt;m role=&quot;WorkerRole1&quot; xmlns=&quot;urn:azure:m:v1&quot;&gt;&lt;r name=&quot;WebRole1&quot;&gt;&lt;e name=&quot;Endpoint1&quot; /&gt;&lt;/r&gt;&lt;r name=&quot;WorkerRole1&quot; /&gt;&lt;/m&gt;" />
@@ -110,9 +110,9 @@
     </group>
   </groups>
   <implements>
-    <implementation Id="4fa8e15d-2053-4292-a8f6-65799c1b7505" ref="Microsoft.RedDog.Contract\ServiceContract\PA3Contract@ServiceDefinition">
+    <implementation Id="4460c720-7d82-44b8-8759-0a5d9f3ef51e" ref="Microsoft.RedDog.Contract\ServiceContract\PA3Contract@ServiceDefinition">
       <interfacereferences>
-        <interfaceReference Id="015ec607-cb99-44b2-9596-e9979e433918" ref="Microsoft.RedDog.Contract\Interface\WebRole1:Endpoint1@ServiceDefinition">
+        <interfaceReference Id="61522666-c8fc-4e99-8fd5-37b284329a64" ref="Microsoft.RedDog.Contract\Interface\WebRole1:Endpoint1@ServiceDefinition">
           <inPort>
             <inPortMoniker name="/PA3/PA3Group/WebRole1:Endpoint1" />
           </inPort>

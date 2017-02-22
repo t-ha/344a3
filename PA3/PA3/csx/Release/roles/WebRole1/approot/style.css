@@ -1,8 +1,15 @@
 ﻿body {
+    text-align: left;
 }
 
 table, th, tr, td {
     border: 1px black solid;
+}
+
+table {
     border-collapse: collapse;
-    text-align: left;
+}
+
+th, td {
+    padding: 4px;
 }

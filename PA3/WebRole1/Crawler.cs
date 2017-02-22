@@ -12,7 +12,7 @@ namespace WebRole1
     public class Crawler
     {
         public HashSet<string> marked = new HashSet<string>();
-        public List<string> disallowed = new List<string>();
+        public HashSet<string> disallowed = new HashSet<string>();
         public CloudQueue toBeCrawled;
 
         public Crawler(string url, string url2, CloudQueue toBeCrawled)
@@ -66,7 +66,7 @@ namespace WebRole1
 
         private void ConfigureBR(string nodeUrl)
         {
-
+            marked.Add(nodeUrl);
             toBeCrawled.AddMessage(new CloudQueueMessage(nodeUrl));
         }
 
@@ -82,6 +82,7 @@ namespace WebRole1
                 }
                 else
                 {
+                    marked.Add(nodeUrl);
                     toBeCrawled.AddMessage(new CloudQueueMessage(nodeUrl));
                 }
             }
